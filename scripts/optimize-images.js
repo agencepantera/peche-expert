@@ -7,8 +7,8 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const BLOG_IMAGES_DIR = path.join(__dirname, '../public/images/blog');
-const MAX_WIDTH = 800; // Largeur maximale optimale pour le web
-const QUALITY = 65; // Qualité de compression réduite pour plus d'optimisation
+const MAX_WIDTH = 640; // Réduit à 640px pour une meilleure optimisation mobile
+const QUALITY = 60; // Qualité ajustée
 
 async function optimizeImages() {
     try {
@@ -37,14 +37,17 @@ async function optimizeImages() {
                     })
                     .webp({ 
                         quality: QUALITY,
-                        effort: 6, // Augmenter l'effort de compression
-                        reductionEffort: 6, // Augmenter l'effort de réduction
+                        effort: 6,
+                        lossless: false,
+                        nearLossless: false
                     })
                     .toFile(outputPath);
 
                 const newStats = await fs.stat(outputPath);
                 const newFileSizeInKb = newStats.size / 1024;
-                console.log(`✓ Optimisé ! Nouvelle taille: ${newFileSizeInKb.toFixed(2)} KB (${((1 - newFileSizeInKb/fileSizeInKb) * 100).toFixed(2)}% de réduction)`);
+                const reduction = ((1 - newFileSizeInKb/fileSizeInKb) * 100).toFixed(2);
+                console.log(`✓ Optimisé ! Nouvelle taille: ${newFileSizeInKb.toFixed(2)} KB (${reduction}% de réduction)`);
+                console.log(`  Dimensions: ${width}x${height} pixels`);
             }
         }
         
