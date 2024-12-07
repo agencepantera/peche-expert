@@ -10,19 +10,17 @@ const BLOG_IMAGES_DIR = path.join(__dirname, '../public/images/blog');
 
 // Définir différentes tailles pour les images
 const SIZES = [
-    { width: 320, suffix: '-sm' },
-    { width: 480, suffix: '-md' },
-    { width: 640, suffix: '-lg' }
+    { width: 280, suffix: '-sm', quality: 60 },
+    { width: 400, suffix: '-md', quality: 55 },
+    { width: 520, suffix: '-lg', quality: 50 }
 ];
-
-const QUALITY = 55; // Qualité WebP
 
 async function optimizeImages() {
     try {
         const files = await fs.readdir(BLOG_IMAGES_DIR);
         
         for (const file of files) {
-            if (file.endsWith('.webp') && !file.startsWith('optimized-')) {
+            if (file.endsWith('.webp') && !file.includes('-sm') && !file.includes('-md') && !file.includes('-lg')) {
                 const inputPath = path.join(BLOG_IMAGES_DIR, file);
                 const stats = await fs.stat(inputPath);
                 const fileSizeInKb = stats.size / 1024;
@@ -46,17 +44,22 @@ async function optimizeImages() {
                             withoutEnlargement: true
                         })
                         .webp({ 
-                            quality: QUALITY,
+                            quality: size.quality,
                             effort: 6,
                             lossless: false,
-                            nearLossless: false
+                            nearLossless: false,
+                            reductionEffort: 6
                         })
                         .toFile(outputPath);
 
                     const newStats = await fs.stat(outputPath);
                     const newFileSizeInKb = newStats.size / 1024;
-                    console.log(`✓ Taille ${width}px : ${newFileSizeInKb.toFixed(2)} KB (${outputFilename})`);
+                    console.log(`✓ Taille ${width}px (qualité ${size.quality}%) : ${newFileSizeInKb.toFixed(2)} KB (${outputFilename})`);
                 }
+
+                // Supprimer l'image originale
+                await fs.unlink(inputPath);
+                console.log(`✓ Image originale supprimée: ${file}`);
             }
         }
         
