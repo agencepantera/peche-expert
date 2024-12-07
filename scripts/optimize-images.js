@@ -8,7 +8,7 @@ const __dirname = path.dirname(__filename);
 
 const BLOG_IMAGES_DIR = path.join(__dirname, '../public/images/blog');
 const MAX_WIDTH = 800; // Largeur maximale optimale pour le web
-const QUALITY = 80; // Qualité de compression
+const QUALITY = 65; // Qualité de compression réduite pour plus d'optimisation
 
 async function optimizeImages() {
     try {
@@ -22,13 +22,24 @@ async function optimizeImages() {
                 
                 console.log(`Optimisation de ${file} (Taille actuelle: ${fileSizeInKb.toFixed(2)} KB)`);
 
+                // Obtenir les métadonnées de l'image
+                const metadata = await sharp(inputPath).metadata();
+                
+                // Calculer la nouvelle largeur en conservant le ratio
+                const width = Math.min(metadata.width, MAX_WIDTH);
+                const height = Math.round((width * metadata.height) / metadata.width);
+
                 const outputPath = path.join(BLOG_IMAGES_DIR, `optimized-${file}`);
                 await sharp(inputPath)
-                    .resize(MAX_WIDTH, null, {
-                        withoutEnlargement: true,
-                        fit: 'inside'
+                    .resize(width, height, {
+                        fit: 'cover',
+                        withoutEnlargement: true
                     })
-                    .webp({ quality: QUALITY })
+                    .webp({ 
+                        quality: QUALITY,
+                        effort: 6, // Augmenter l'effort de compression
+                        reductionEffort: 6, // Augmenter l'effort de réduction
+                    })
                     .toFile(outputPath);
 
                 const newStats = await fs.stat(outputPath);
