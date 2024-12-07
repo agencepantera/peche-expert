@@ -40,15 +40,22 @@ import '../styles/fonts.css';
 					</a>
 				</div>
 
-				<button class="md:hidden text-gray-600" id="mobile-menu-button">
-					<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+				<button 
+					class="md:hidden text-gray-600" 
+					id="mobile-menu-button"
+					aria-label="Menu principal"
+					aria-expanded="false"
+					aria-controls="mobile-menu"
+				>
+					<span class="sr-only">Ouvrir le menu</span>
+					<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
 					</svg>
 				</button>
 			</nav>
 
 			<!-- Mobile Menu -->
-			<div class="md:hidden hidden bg-white" id="mobile-menu">
+			<div class="md:hidden hidden bg-white" id="mobile-menu" role="menu" aria-labelledby="mobile-menu-button">
 				<div class="px-4 py-4 space-y-4">
 					<a href="/equipement" class="block text-gray-600 hover:text-gray-900">Équipement</a>
 					<a href="/blog" class="block text-gray-600 hover:text-gray-900">Blog</a>
@@ -116,7 +123,15 @@ import '../styles/fonts.css';
 
 	if (mobileMenuButton && mobileMenu) {
 		mobileMenuButton.addEventListener('click', () => {
+			const isExpanded = mobileMenuButton.getAttribute('aria-expanded') === 'true';
+			mobileMenuButton.setAttribute('aria-expanded', !isExpanded);
 			mobileMenu.classList.toggle('hidden');
+			
+			// Mettre à jour le texte du sr-only pour refléter l'état
+			const srOnlyText = mobileMenuButton.querySelector('.sr-only');
+			if (srOnlyText) {
+				srOnlyText.textContent = !isExpanded ? 'Fermer le menu' : 'Ouvrir le menu';
+			}
 		});
 	}
 </script>
