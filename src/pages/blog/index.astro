@@ -53,6 +53,7 @@ const categories = [...new Set([...allCategories, ...usedCategories])];
           description={post.data.description}
           image={post.data.image}
           href={`/blog/${post.slug}`}
+          author={post.data.author}
         />
       ))}
     </div>

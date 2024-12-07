@@ -1,7 +1,7 @@
 ---
 title: "Les techniques essentielles de la pêche à la mouche"
 description: "Découvrez l'art de la pêche à la mouche : techniques de lancer, choix des mouches et spots idéaux pour débuter dans cette discipline élégante."
-pubDate: 2024-01-16
+pubDate: 2024-12-01
 author: "julien"
 image: "/images/blog/Les-techniques-essentielles-de-la-peche-a-la-mouche.webp"
 category: "techniques"

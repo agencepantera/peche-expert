@@ -8,7 +8,7 @@ import Newsletter from '../components/Newsletter.astro';
 const allPosts = await getCollection('blog');
 const sortedPosts = allPosts
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
-  .slice(0, 6);
+  .slice(0, 3);
 
 // Définir toutes les catégories possibles
 const allCategories = ['techniques', 'spots', 'equipement', 'conseils'];
@@ -71,6 +71,7 @@ const allCategories = ['techniques', 'spots', 'equipement', 'conseils'];
               description={post.data.description}
               image={post.data.image}
               href={`/blog/${post.slug}`}
+              author={post.data.author}
             />
           ))}
         </div>

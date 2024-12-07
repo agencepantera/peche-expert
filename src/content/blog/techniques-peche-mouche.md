@@ -1,7 +1,7 @@
 ---
 title: "Maîtriser la pêche à la mouche : secrets d'un expert pour tous les niveaux"
 description: "Découvrez tous les secrets de la pêche à la mouche, des techniques de base aux astuces avancées, par Julien, expert et guide passionné."
-pubDate: 2024-01-15
+pubDate: 2024-11-28
 author: "julien"
 image: "/images/blog/maitriser-la-peche-a-la-mouche.webp"
 category: "techniques"

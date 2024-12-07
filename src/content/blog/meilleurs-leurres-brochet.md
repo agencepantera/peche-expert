@@ -1,7 +1,7 @@
 ---
 title: "Leurres pour brochet : les 10 meilleurs modèles pour pêcher le prédateur en toutes conditions"
 description: "Découvrez ma sélection des meilleurs leurres pour brochet et les techniques d'animation pour maximiser vos chances de capture, basées sur 20 ans d'expérience."
-pubDate: 2024-01-17
+pubDate: 2024-12-07
 author: "julien"
 image: "/images/blog/meilleurs-leurres-pour-brochets.webp"
 category: "techniques"

@@ -1,7 +1,7 @@
 ---
 title: "Les 5 meilleurs spots de pêche en France : guide complet par un expert"
 description: "Découvrez ma sélection personnelle des plus beaux spots de pêche en France, fruit de 20 ans d'exploration des rivières et lacs de l'Hexagone."
-pubDate: 2024-01-10
+pubDate: 2024-12-04
 author: "julien"
 image: "/images/blog/Les-5-meilleurs-spots-de-peche-en-France.webp"
 category: "spots"
