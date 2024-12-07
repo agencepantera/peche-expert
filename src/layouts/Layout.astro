@@ -125,7 +125,7 @@ import '../styles/fonts.css';
 	if (mobileMenuButton && mobileMenu) {
 		mobileMenuButton.addEventListener('click', () => {
 			const isExpanded = mobileMenuButton.getAttribute('aria-expanded') === 'true';
-			mobileMenuButton.setAttribute('aria-expanded', !isExpanded);
+			mobileMenuButton.setAttribute('aria-expanded', (!isExpanded).toString());
 			mobileMenu.classList.toggle('hidden');
 			
 			// Mettre à jour le texte du sr-only pour refléter l'état
