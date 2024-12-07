@@ -18,36 +18,16 @@ const { className = "" } = Astro.props;
     </p>
 
     <form 
+      action="https://formspree.io/f/xdkovkww"
+      method="POST"
       class="max-w-lg mx-auto"
-      onsubmit="event.preventDefault(); 
-        const formData = new FormData(this);
-        const email = formData.get('email');
-
-        try {
-          const response = await fetch('/api/newsletter', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ email }),
-          });
-
-          if (response.ok) {
-            alert('Merci de votre inscription !');
-            this.reset();
-          } else {
-            throw new Error('Erreur lors de l\'inscription');
-          }
-        } catch (error) {
-          alert('Une erreur est survenue. Veuillez réessayer.');
-        }
-      "
     >
       <div class="relative group">
         <div class="absolute -inset-0.5 bg-gradient-to-r from-blue-400 to-blue-600 rounded-full opacity-75 group-hover:opacity-100 blur transition duration-300"></div>
         <div class="relative flex bg-white rounded-full p-2">
           <input
             type="email"
+            name="email"
             placeholder="Votre adresse email"
             class="flex-1 bg-transparent text-gray-900 placeholder-gray-500 px-6 py-3 focus:outline-none"
             required
