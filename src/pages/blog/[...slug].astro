@@ -1,0 +1,112 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import ImagePlaceholder from '../../components/ImagePlaceholder.astro';
+import Newsletter from '../../components/Newsletter.astro';
+import RelatedPosts from '../../components/RelatedPosts.astro';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  
+  return posts.map(post => {
+    return {
+      params: { slug: post.slug },
+      props: { post, posts },
+    };
+  });
+}
+
+const { post, posts } = Astro.props;
+const { Content } = await post.render();
+
+// Format de la date
+const formattedDate = new Intl.DateTimeFormat('fr-FR', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric'
+}).format(post.data.pubDate);
+---
+
+<Layout title={post.data.title}>
+  <article class="max-w-4xl mx-auto px-4 py-12">
+    <!-- En-tête de l'article -->
+    <header class="mb-8">
+      <div class="mb-4">
+        <a 
+          href={`/blog/category/${post.data.category}`}
+          class="bg-gradient-to-br from-gray-900 to-blue-900 text-white px-4 py-1.5 rounded-full text-sm hover:opacity-90 transition-opacity"
+        >
+          {post.data.category.charAt(0).toUpperCase() + post.data.category.slice(1)}
+        </a>
+      </div>
+      
+      <h1 class="text-4xl md:text-5xl font-bold mb-4">
+        {post.data.title}
+      </h1>
+      
+      <p class="text-xl text-gray-600 mb-6">
+        {post.data.description}
+      </p>
+      
+      <div class="flex items-center text-gray-600 mb-8">
+        <span>Le {formattedDate}</span>
+      </div>
+      
+      {post.data.image && (
+        <div class="relative h-[400px] rounded-xl overflow-hidden mb-12">
+          <ImagePlaceholder
+            src={post.data.image}
+            alt={post.data.title}
+            className="w-full h-full"
+          />
+        </div>
+      )}
+    </header>
+
+    <!-- Contenu de l'article -->
+    <div class="prose prose-lg max-w-none">
+      <Content />
+    </div>
+
+    <!-- Tags -->
+    <div class="mt-12 pt-8 border-t">
+      <div class="flex flex-wrap gap-2">
+        {post.data.tags.map(tag => (
+          <a
+            href={`/blog/tag/${tag}`}
+            class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm hover:bg-gray-200 transition-colors"
+          >
+            #{tag}
+          </a>
+        ))}
+      </div>
+    </div>
+
+    <!-- Newsletter -->
+    <Newsletter className="mt-16 rounded-2xl" />
+
+    <!-- Articles connexes -->
+    <RelatedPosts currentPost={post} posts={posts} />
+  </article>
+</Layout>
+
+<style is:global>
+  .prose {
+    @apply text-gray-800;
+  }
+  .prose h2 {
+    @apply text-2xl font-bold mt-8 mb-4;
+  }
+  .prose h3 {
+    @apply text-xl font-bold mt-6 mb-3;
+  }
+  .prose p {
+    @apply mb-4;
+  }
+  .prose ul {
+    @apply list-disc pl-6 mb-4;
+  }
+  .prose li {
+    @apply mb-2;
+  }
+</style>

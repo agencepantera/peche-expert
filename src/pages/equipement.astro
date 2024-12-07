@@ -1,0 +1,94 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../layouts/Layout.astro';
+import Card from '../components/Card.astro';
+import Newsletter from '../components/Newsletter.astro';
+
+// Récupérer tous les articles d'équipement
+const allPosts = await getCollection('blog');
+const equipmentPosts = allPosts
+  .filter(post => post.data.category === 'equipement')
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+// Grouper les articles par type d'équipement (basé sur les tags)
+const equipmentTypes = [...new Set(equipmentPosts.flatMap(post => post.data.tags))];
+---
+
+<Layout title="Équipement de pêche - Guides et recommandations">
+  <main class="max-w-7xl mx-auto px-4 py-12">
+    <!-- En-tête -->
+    <div class="text-center mb-16">
+      <h1 class="text-5xl font-bold mb-6">Équipement de pêche</h1>
+      <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+        Guides d'achat, tests et recommandations pour choisir le meilleur équipement 
+        de pêche adapté à vos besoins et votre budget.
+      </p>
+    </div>
+
+    <!-- Navigation par type d'équipement -->
+    <div class="flex flex-wrap justify-center gap-4 mb-12">
+      {equipmentTypes.map(type => (
+        <a
+          href={`#${type}`}
+          class="px-6 py-2 bg-gray-100 rounded-full text-gray-700 hover:bg-gray-200 transition-colors"
+        >
+          {type}
+        </a>
+      ))}
+    </div>
+
+    <!-- Grille d'articles -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+      {equipmentPosts.map(post => (
+        <Card
+          title={post.data.title}
+          description={post.data.description}
+          image={post.data.image}
+          href={`/blog/${post.slug}`}
+        />
+      ))}
+    </div>
+
+    <!-- Guides d'achat rapides -->
+    <div class="bg-gray-50 rounded-xl p-8 mb-16">
+      <h2 class="text-3xl font-bold mb-8 text-center">Guides d'achat rapides</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div class="bg-white p-6 rounded-lg shadow-md">
+          <h3 class="text-xl font-semibold mb-4">Pour débutants</h3>
+          <ul class="space-y-2 text-gray-600">
+            <li>• Canne à pêche polyvalente</li>
+            <li>• Moulinet de base</li>
+            <li>• Kit d'accessoires essentiels</li>
+          </ul>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow-md">
+          <h3 class="text-xl font-semibold mb-4">Pêche en mer</h3>
+          <ul class="space-y-2 text-gray-600">
+            <li>• Canne robuste</li>
+            <li>• Moulinet résistant à l'eau salée</li>
+            <li>• Équipement de sécurité</li>
+          </ul>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow-md">
+          <h3 class="text-xl font-semibold mb-4">Pêche à la mouche</h3>
+          <ul class="space-y-2 text-gray-600">
+            <li>• Canne spéciale mouche</li>
+            <li>• Soie et backing</li>
+            <li>• Sélection de mouches</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Newsletter -->
+    <div class="max-w-4xl mx-auto">
+      <Newsletter />
+    </div>
+  </main>
+</Layout>
+
+<style>
+  .prose {
+    max-width: 65ch;
+  }
+</style>

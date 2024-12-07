@@ -1,0 +1,67 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import Card from '../../components/Card.astro';
+import Pagination from '../../components/Pagination.astro';
+import CategoryFilters from '../../components/CategoryFilters.astro';
+
+// Nombre d'articles par page
+const ITEMS_PER_PAGE = 9;
+
+// Récupérer tous les articles
+const allPosts = await getCollection('blog');
+const sortedPosts = allPosts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+// Récupérer le numéro de page depuis l'URL
+const currentPage = Astro.url.searchParams.get('page') ? parseInt(Astro.url.searchParams.get('page')) : 1;
+const totalPages = Math.ceil(sortedPosts.length / ITEMS_PER_PAGE);
+
+// Calculer les articles pour la page courante
+const start = (currentPage - 1) * ITEMS_PER_PAGE;
+const end = start + ITEMS_PER_PAGE;
+const currentPosts = sortedPosts.slice(start, end);
+
+// Définir toutes les catégories possibles
+const allCategories = ['techniques', 'spots', 'equipement', 'conseils'];
+
+// Récupérer les catégories qui ont des articles
+const usedCategories = [...new Set(allPosts.map(post => post.data.category))];
+
+// Combiner les deux ensembles de catégories pour avoir toutes les catégories, même celles sans articles
+const categories = [...new Set([...allCategories, ...usedCategories])];
+
+---
+
+<Layout title="Blog - Articles de pêche">
+  <main class="max-w-7xl mx-auto px-4 py-12">
+    <!-- En-tête -->
+    <div class="text-center mb-12">
+      <h1 class="text-4xl font-bold mb-4">Blog</h1>
+      <p class="text-xl text-gray-600">
+        Découvrez nos articles sur la pêche, les techniques et les meilleurs spots
+      </p>
+    </div>
+
+    <!-- Filtres par catégorie -->
+    <CategoryFilters categories={categories} currentCategory={null} />
+
+    <!-- Liste des articles -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+      {currentPosts.map(post => (
+        <Card
+          title={post.data.title}
+          description={post.data.description}
+          image={post.data.image}
+          href={`/blog/${post.slug}`}
+        />
+      ))}
+    </div>
+
+    <!-- Pagination -->
+    <Pagination
+      currentPage={currentPage}
+      totalPages={totalPages}
+      baseUrl="/blog"
+    />
+  </main>
+</Layout>

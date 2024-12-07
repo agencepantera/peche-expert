@@ -1,0 +1,57 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../../layouts/Layout.astro';
+import Card from '../../../components/Card.astro';
+import CategoryFilters from '../../../components/CategoryFilters.astro';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  // Définir toutes les catégories possibles
+  const allCategories = ['techniques', 'spots', 'equipement', 'conseils'];
+  
+  return allCategories.map(category => ({
+    params: { category },
+    props: { 
+      posts: posts.filter(post => post.data.category === category),
+      category,
+      categories: allCategories
+    },
+  }));
+}
+
+const { posts, category, categories } = Astro.props;
+const sortedPosts = posts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+---
+
+<Layout title={`${category.charAt(0).toUpperCase() + category.slice(1)} - PêcheBlog`}>
+  <main class="max-w-7xl mx-auto px-4 py-12">
+    <h1 class="text-4xl font-bold text-center mb-8">
+      Articles sur {category.charAt(0).toUpperCase() + category.slice(1)}
+    </h1>
+    
+    <!-- Filtres -->
+    <CategoryFilters categories={categories} currentCategory={category} />
+
+    <!-- Articles -->
+    {sortedPosts.length > 0 ? (
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {sortedPosts.map(post => (
+          <Card
+            title={post.data.title}
+            description={post.data.description}
+            image={post.data.image}
+            href={`/blog/${post.slug}`}
+          />
+        ))}
+      </div>
+    ) : (
+      <div class="text-center py-12">
+        <p class="text-xl text-gray-600">
+          Aucun article n'est disponible dans cette catégorie pour le moment.
+          <br />
+          Revenez bientôt pour découvrir de nouveaux contenus !
+        </p>
+      </div>
+    )}
+  </main>
+</Layout>

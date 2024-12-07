@@ -1,0 +1,109 @@
+---
+interface Props {
+  currentPage: number;
+  totalPages: number;
+  baseUrl: string;
+}
+
+const { currentPage, totalPages, baseUrl } = Astro.props;
+
+// Créer un tableau de pages à afficher
+const createPageArray = () => {
+  const pages = [];
+  const maxVisiblePages = 5;
+
+  if (totalPages <= maxVisiblePages) {
+    // Si le nombre total de pages est inférieur ou égal au maximum visible,
+    // afficher toutes les pages
+    for (let i = 1; i <= totalPages; i++) {
+      pages.push(i);
+    }
+  } else {
+    // Toujours inclure la première page
+    pages.push(1);
+
+    // Calculer les pages du milieu
+    let start = Math.max(2, currentPage - 1);
+    let end = Math.min(totalPages - 1, currentPage + 1);
+
+    // Ajouter des points de suspension si nécessaire
+    if (start > 2) {
+      pages.push('...');
+    }
+
+    // Ajouter les pages du milieu
+    for (let i = start; i <= end; i++) {
+      pages.push(i);
+    }
+
+    // Ajouter des points de suspension si nécessaire
+    if (end < totalPages - 1) {
+      pages.push('...');
+    }
+
+    // Toujours inclure la dernière page
+    pages.push(totalPages);
+  }
+
+  return pages;
+};
+
+const pages = createPageArray();
+---
+
+<nav class="flex justify-center mt-8" aria-label="Pagination">
+  <ul class="flex items-center gap-2">
+    <!-- Bouton précédent -->
+    {currentPage > 1 && (
+      <li>
+        <a
+          href={`${baseUrl}?page=${currentPage - 1}`}
+          class="inline-flex items-center px-4 py-2 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors"
+          aria-label="Page précédente"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+          </svg>
+        </a>
+      </li>
+    )}
+
+    <!-- Pages -->
+    {pages.map((page) => (
+      <li>
+        {typeof page === 'number' ? (
+          <a
+            href={`${baseUrl}?page=${page}`}
+            class={`px-4 py-2 rounded-lg transition-colors ${
+              currentPage === page
+                ? 'bg-primary-gradient text-white'
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+            }`}
+            aria-current={currentPage === page ? 'page' : undefined}
+          >
+            {page}
+          </a>
+        ) : (
+          <span class="px-2 text-gray-400">
+            {page}
+          </span>
+        )}
+      </li>
+    ))}
+
+    <!-- Bouton suivant -->
+    {currentPage < totalPages && (
+      <li>
+        <a
+          href={`${baseUrl}?page=${currentPage + 1}`}
+          class="inline-flex items-center px-4 py-2 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors"
+          aria-label="Page suivante"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg>
+        </a>
+      </li>
+    )}
+  </ul>
+</nav>

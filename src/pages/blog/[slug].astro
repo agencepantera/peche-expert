@@ -1,0 +1,244 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import { formatDate } from '../../utils/date';
+import RelatedPosts from '../../components/RelatedPosts.astro';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  return posts.map(post => ({
+    params: { slug: post.slug },
+    props: { post, posts },
+  }));
+}
+
+const { post, posts } = Astro.props;
+const { Content, headings } = await post.render();
+
+const allPosts = await getCollection('blog');
+const similarPosts = allPosts
+  .filter(p => p.data.category === post.data.category && p.slug !== post.slug)
+  .slice(0, 3);
+---
+
+<Layout title={`${post.data.title} - PêcheBlog`}>
+  <main>
+    <!-- En-tête de l'article -->
+    <header class="relative py-16 bg-gradient-to-b from-gray-900 to-gray-800">
+      <div class="max-w-4xl mx-auto px-6">
+        <div class="text-center">
+          <div class="mb-6">
+            <a href={`/blog/category/${post.data.category}`}
+               class="inline-block px-4 py-1.5 bg-gradient-to-br from-gray-900 to-blue-900 text-white text-sm font-medium rounded-full hover:opacity-90 transition-opacity">
+              {post.data.category.charAt(0).toUpperCase() + post.data.category.slice(1)}
+            </a>
+          </div>
+          <h1 class="text-4xl md:text-5xl font-bold text-white mb-6 leading-tight">{post.data.title}</h1>
+          <p class="text-xl text-gray-300 mb-8 leading-relaxed max-w-2xl mx-auto">{post.data.description}</p>
+          <div class="flex items-center justify-center space-x-6 text-gray-400">
+            <time datetime={post.data.pubDate.toISOString()} class="flex items-center">
+              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                      d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              Le {formatDate(post.data.pubDate)}
+            </time>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Image principale -->
+    <div class="max-w-5xl mx-auto -mt-10 px-6">
+      {post.data.image && (
+        <div class="aspect-[16/9] rounded-xl overflow-hidden shadow-2xl">
+          <img src={post.data.image} alt={post.data.title} 
+               class="w-full h-full object-cover" />
+        </div>
+      )}
+    </div>
+
+    <!-- Contenu principal -->
+    <div class="max-w-7xl mx-auto px-6 py-16">
+      <div class="grid grid-cols-1 lg:grid-cols-[240px_1fr_300px] gap-12">
+        <!-- Sommaire (gauche) -->
+        <aside class="hidden lg:block">
+          <div class="sticky top-8">
+            <nav class="space-y-1 font-medium">
+              <p class="text-sm uppercase tracking-wider text-gray-500 mb-4">Sommaire</p>
+              {headings.map((heading) => (
+                <a href={`#${heading.slug}`}
+                   class:list={[
+                     "block py-1 hover:text-blue-600 transition-colors",
+                     {
+                       "pl-4 text-sm text-gray-600": heading.depth === 3,
+                       "text-gray-900": heading.depth === 2
+                     }
+                   ]}>
+                  {heading.text}
+                </a>
+              ))}
+            </nav>
+          </div>
+        </aside>
+
+        <!-- Article -->
+        <article class="min-w-0">
+          <div class="prose prose-lg max-w-none">
+            <Content />
+          </div>
+
+          <!-- Tags -->
+          {post.data.tags && (
+            <div class="mt-12 pt-6 border-t">
+              <h3 class="text-sm uppercase tracking-wider text-gray-500 mb-4">Tags</h3>
+              <div class="flex flex-wrap gap-2">
+                {post.data.tags.map(tag => (
+                  <a href={`/blog/tag/${tag}`}
+                     class="px-4 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm rounded-full transition-colors">
+                    #{tag}
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
+        </article>
+
+        <!-- Articles similaires (droite) -->
+        <aside class="hidden lg:block">
+          <div class="sticky top-8">
+            <h3 class="text-sm uppercase tracking-wider text-gray-500 mb-4">Articles similaires</h3>
+            <div class="space-y-6">
+              {similarPosts.map((similarPost) => (
+                <a href={`/blog/${similarPost.slug}`} class="block group">
+                  <article class="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+                    <div class="aspect-[16/9] overflow-hidden">
+                      <img 
+                        src={similarPost.data.image} 
+                        alt={similarPost.data.title}
+                        class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-300"
+                      />
+                    </div>
+                    <div class="p-4">
+                      <h4 class="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-2 mb-2">
+                        {similarPost.data.title}
+                      </h4>
+                      <p class="text-sm text-gray-600 line-clamp-2">
+                        {similarPost.data.description}
+                      </p>
+                    </div>
+                  </article>
+                </a>
+              ))}
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+
+    <!-- Articles similaires -->
+    <div class="mt-16">
+      <RelatedPosts currentPost={post} posts={posts} maxPosts={3} />
+    </div>
+  </main>
+</Layout>
+
+<style is:global>
+  /* Style du contenu de l'article */
+  .prose {
+    @apply text-gray-800;
+  }
+
+  .prose h2 {
+    @apply text-2xl font-bold text-gray-900 mt-12 mb-6 scroll-mt-20;
+  }
+
+  .prose h3 {
+    @apply text-xl font-semibold text-gray-900 mt-8 mb-4 scroll-mt-20;
+  }
+
+  .prose p {
+    @apply text-base leading-relaxed text-gray-700 mb-6;
+  }
+
+  .prose strong {
+    @apply font-semibold text-gray-900;
+  }
+
+  .prose a {
+    @apply text-blue-600 hover:text-blue-800 font-medium underline decoration-blue-300 hover:decoration-blue-600 transition-colors;
+  }
+
+  .prose ul {
+    @apply my-6 space-y-2;
+  }
+
+  .prose ol {
+    @apply my-6 space-y-2;
+  }
+
+  .prose li {
+    @apply text-gray-700;
+  }
+
+  .prose ul > li {
+    @apply relative pl-6;
+  }
+
+  .prose ul > li::before {
+    @apply content-[''] absolute w-1.5 h-1.5 bg-blue-500 rounded-full left-1 top-2;
+  }
+
+  .prose ol {
+    @apply list-decimal list-inside;
+  }
+
+  .prose ol > li {
+    @apply pl-1;
+  }
+
+  .prose img {
+    @apply rounded-xl my-8 shadow-lg;
+  }
+
+  .prose blockquote {
+    @apply pl-4 py-1 border-l-4 border-blue-500 my-6 text-gray-700 italic;
+  }
+
+  .prose blockquote p {
+    @apply mb-0;
+  }
+
+  .prose pre {
+    @apply bg-gray-900 text-gray-100 rounded-lg p-4 my-6 overflow-x-auto;
+  }
+
+  .prose code {
+    @apply bg-gray-100 text-gray-900 px-1.5 py-0.5 rounded text-sm font-mono;
+  }
+
+  .prose pre code {
+    @apply bg-transparent text-inherit p-0 text-sm;
+  }
+
+  .prose table {
+    @apply w-full my-6 border-collapse;
+  }
+
+  .prose thead {
+    @apply bg-gray-100;
+  }
+
+  .prose th {
+    @apply px-4 py-2 text-left font-semibold text-gray-900 border border-gray-200;
+  }
+
+  .prose td {
+    @apply px-4 py-2 border border-gray-200;
+  }
+
+  /* Animation fluide pour le défilement des ancres */
+  html {
+    scroll-behavior: smooth;
+  }
+</style>

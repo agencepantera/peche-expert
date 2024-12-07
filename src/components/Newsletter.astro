@@ -1,0 +1,103 @@
+---
+interface Props {
+  className?: string;
+}
+
+const { className = "" } = Astro.props;
+---
+
+<div class={`relative bg-gradient-to-br from-gray-900 to-blue-900 p-12 rounded-3xl ${className}`}>
+  <div class="relative z-10 text-center">
+    <h2 class="text-4xl md:text-5xl font-bold mb-6">
+      <span class="text-white">
+        Restez informé
+      </span>
+    </h2>
+    <p class="text-2xl text-white mb-12 max-w-2xl mx-auto leading-relaxed font-medium">
+      Recevez nos meilleurs conseils de pêche et découvrez en avant-première nos nouveaux articles
+    </p>
+
+    <form 
+      class="max-w-lg mx-auto"
+      onsubmit="event.preventDefault(); 
+        const formData = new FormData(this);
+        const email = formData.get('email');
+
+        try {
+          const response = await fetch('/api/newsletter', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email }),
+          });
+
+          if (response.ok) {
+            alert('Merci de votre inscription !');
+            this.reset();
+          } else {
+            throw new Error('Erreur lors de l\'inscription');
+          }
+        } catch (error) {
+          alert('Une erreur est survenue. Veuillez réessayer.');
+        }
+      "
+    >
+      <div class="relative group">
+        <div class="absolute -inset-0.5 bg-gradient-to-r from-blue-400 to-blue-600 rounded-full opacity-75 group-hover:opacity-100 blur transition duration-300"></div>
+        <div class="relative flex bg-white rounded-full p-2">
+          <input
+            type="email"
+            placeholder="Votre adresse email"
+            class="flex-1 bg-transparent text-gray-900 placeholder-gray-500 px-6 py-3 focus:outline-none"
+            required
+          />
+          <button
+            type="submit"
+            class="px-8 py-3 bg-gradient-to-r from-blue-500 to-blue-700 text-white font-semibold rounded-full hover:from-blue-600 hover:to-blue-800 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+          >
+            S'abonner
+          </button>
+        </div>
+      </div>
+    </form>
+
+    <p class="mt-6 text-sm text-white/80">
+      Nous respectons votre vie privée. Désabonnez-vous à tout moment.
+    </p>
+  </div>
+
+  <!-- Éléments décoratifs -->
+  <div class="absolute top-0 left-1/4 w-32 h-32 bg-blue-400 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob"></div>
+  <div class="absolute top-0 right-1/4 w-32 h-32 bg-blue-500 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob animation-delay-2000"></div>
+  <div class="absolute bottom-0 left-1/2 w-32 h-32 bg-blue-600 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob animation-delay-4000"></div>
+</div>
+
+<style>
+  @keyframes blob {
+    0% {
+      transform: translate(0px, 0px) scale(1);
+    }
+    33% {
+      transform: translate(30px, -50px) scale(1.1);
+    }
+    66% {
+      transform: translate(-20px, 20px) scale(0.9);
+    }
+    100% {
+      transform: translate(0px, 0px) scale(1);
+    }
+  }
+
+  .animate-blob {
+    animation: blob 7s infinite;
+  }
+
+  .animation-delay-2000 {
+    animation-delay: 2s;
+  }
+
+  .animation-delay-4000 {
+    animation-delay: 4s;
+  }
+</style>

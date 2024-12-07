@@ -1,0 +1,139 @@
+---
+interface Props {
+	title?: string;
+}
+
+const { title = "Pêche Expert - Votre guide ultime de la pêche" } = Astro.props;
+
+// Définir les catégories
+const categories = [
+	{ slug: 'techniques', name: 'Techniques', description: 'Maîtrisez les techniques de pêche' },
+	{ slug: 'spots', name: 'Spots', description: 'Découvrez les meilleurs spots' },
+	{ slug: 'equipement', name: 'Équipement', description: 'Choisissez le bon équipement' },
+	{ slug: 'conseils', name: 'Conseils', description: 'Apprenez des experts' },
+];
+---
+
+<!doctype html>
+<html lang="fr">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="description" content="Découvrez l'art de la pêche à travers nos guides experts et notre communauté passionnée" />
+		<meta name="viewport" content="width=device-width" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="generator" content={Astro.generator} />
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+		<title>{title}</title>
+	</head>
+	<body class="font-sans">
+		<header class="fixed w-full z-50 bg-white/90 backdrop-blur-sm shadow-sm">
+			<nav class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+				<a href="/" class="text-2xl font-bold bg-gradient-to-br from-gray-900 to-blue-900 bg-clip-text text-transparent">Pêche Expert</a>
+				
+				<div class="hidden md:flex items-center space-x-8">
+					<a href="/equipement" class="text-gray-600 hover:bg-gradient-to-br hover:from-gray-900 hover:to-blue-900 hover:bg-clip-text hover:text-transparent transition-all">Équipement</a>
+					<a href="/blog" class="text-gray-600 hover:bg-gradient-to-br hover:from-gray-900 hover:to-blue-900 hover:bg-clip-text hover:text-transparent transition-all">Blog</a>
+					<a href="/contact" class="bg-gradient-to-br from-gray-900 to-blue-900 text-white px-4 py-2 rounded-full hover:opacity-90 transition-opacity">
+						Contact
+					</a>
+				</div>
+
+				<button class="md:hidden text-gray-600" id="mobile-menu-button">
+					<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+					</svg>
+				</button>
+			</nav>
+
+			<!-- Mobile Menu -->
+			<div class="md:hidden hidden bg-white" id="mobile-menu">
+				<div class="px-4 py-4 space-y-4">
+					<a href="/equipement" class="block text-gray-600 hover:text-gray-900">Équipement</a>
+					<a href="/blog" class="block text-gray-600 hover:text-gray-900">Blog</a>
+					<a href="/contact" class="block bg-gradient-to-br from-gray-900 to-blue-900 text-white px-4 py-2 rounded-full hover:opacity-90 transition-opacity text-center">
+						Contact
+					</a>
+				</div>
+			</div>
+		</header>
+
+		<main class="pt-16">
+			<slot />
+		</main>
+
+		<footer class="bg-gray-900 text-white py-12">
+			<div class="max-w-7xl mx-auto px-4">
+				<div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+					<div>
+						<h3 class="text-xl font-bold mb-4">Pêche Expert</h3>
+						<p class="text-gray-400">Votre guide ultime pour tout ce qui concerne la pêche.</p>
+					</div>
+					<div>
+						<h3 class="text-lg font-semibold mb-4">Navigation</h3>
+						<ul class="space-y-2">
+							<li><a href="/equipement" class="text-gray-400 hover:text-white transition-colors">Équipement</a></li>
+							<li><a href="/blog" class="text-gray-400 hover:text-white transition-colors">Blog</a></li>
+							<li><a href="/contact" class="text-gray-400 hover:text-white transition-colors">Contact</a></li>
+						</ul>
+					</div>
+					<div>
+						<h4 class="font-semibold mb-4">Légal</h4>
+						<ul class="space-y-2 text-gray-400">
+							<li><a href="/mentions-legales" class="hover:bg-gradient-to-br hover:from-gray-900 hover:to-blue-900 hover:bg-clip-text hover:text-transparent">Mentions légales</a></li>
+							<li><a href="/politique-confidentialite" class="hover:bg-gradient-to-br hover:from-gray-900 hover:to-blue-900 hover:bg-clip-text hover:text-transparent">Politique de confidentialité</a></li>
+						</ul>
+					</div>
+					<div>
+						<h4 class="font-semibold mb-4">Catégories</h4>
+						<ul class="space-y-2">
+							{categories.map(cat => (
+								<li>
+									<a 
+										href={`/blog/category/${cat.slug}`}
+										class="text-gray-400 hover:text-white transition-colors block"
+										title={cat.description}
+									>
+										{cat.name}
+									</a>
+								</li>
+							))}
+						</ul>
+					</div>
+				</div>
+				<div class="mt-8 pt-8 border-t border-gray-800 text-center text-gray-400">
+					<p>&copy; {new Date().getFullYear()} Pêche Expert. Tous droits réservés.</p>
+				</div>
+			</div>
+		</footer>
+	</body>
+</html>
+
+<script>
+	const mobileMenuButton = document.getElementById('mobile-menu-button');
+	const mobileMenu = document.getElementById('mobile-menu');
+
+	if (mobileMenuButton && mobileMenu) {
+		mobileMenuButton.addEventListener('click', () => {
+			mobileMenu.classList.toggle('hidden');
+		});
+	}
+</script>
+
+<style>
+	:root {
+		--font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+	}
+	
+	html {
+		font-family: var(--font-sans);
+		scroll-behavior: smooth;
+	}
+
+	body {
+		margin: 0;
+		width: 100%;
+		min-height: 100vh;
+	}
+</style>

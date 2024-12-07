@@ -1,0 +1,95 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../layouts/Layout.astro';
+import Card from '../components/Card.astro';
+import Newsletter from '../components/Newsletter.astro';
+
+// Récupérer tous les articles
+const allPosts = await getCollection('blog');
+const sortedPosts = allPosts
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 6);
+
+// Définir toutes les catégories possibles
+const allCategories = ['techniques', 'spots', 'equipement', 'conseils'];
+---
+
+<Layout title="Pêche Expert - Votre guide de pêche en ligne">
+  <main>
+    <!-- Hero Section -->
+    <section class="bg-gradient-to-br from-gray-900 to-blue-900 text-white py-20">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center">
+          <h1 class="text-4xl md:text-5xl font-bold mb-6">
+            Découvrez l'art de la pêche
+          </h1>
+          <p class="text-xl md:text-2xl mb-8 text-gray-100">
+            Conseils, techniques et spots de pêche pour tous les passionnés
+          </p>
+          <a
+            href="/blog"
+            class="inline-block bg-white text-gray-900 px-8 py-3 rounded-full font-semibold hover:bg-opacity-90 transition-all"
+          >
+            Explorez nos articles
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Categories Section -->
+    <section class="py-16 bg-gray-50">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="text-3xl font-bold text-center mb-12">Explorez par catégorie</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {allCategories.map((category) => (
+            <a
+              href={`/blog/category/${category}`}
+              class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow text-center group"
+            >
+              <h3 class="text-xl font-semibold text-gray-900 capitalize mb-2 group-hover:text-blue-900">
+                {category}
+              </h3>
+              <p class="text-gray-600">
+                {category === 'techniques' && 'Maîtrisez les techniques de pêche'}
+                {category === 'spots' && 'Découvrez les meilleurs spots'}
+                {category === 'equipement' && 'Choisissez le bon équipement'}
+                {category === 'conseils' && 'Apprenez des experts'}
+              </p>
+            </a>
+          ))}
+        </div>
+      </section>
+
+    <!-- Latest Articles -->
+    <section class="py-16">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="text-3xl font-bold text-center mb-12">Derniers articles</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {sortedPosts.map((post) => (
+            <Card
+              title={post.data.title}
+              description={post.data.description}
+              image={post.data.image}
+              href={`/blog/${post.slug}`}
+            />
+          ))}
+        </div>
+        <div class="text-center mt-12">
+          <a
+            href="/blog"
+            class="inline-block bg-gradient-to-br from-gray-900 to-blue-900 text-white px-8 py-3 rounded-full font-semibold hover:opacity-90 transition-opacity"
+          >
+            Voir tous les articles
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Newsletter Section -->
+    <section class="py-16 bg-gray-50">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <Newsletter />
+      </div>
+    </section>
+  </main>
+</Layout>
