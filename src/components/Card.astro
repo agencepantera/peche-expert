@@ -12,11 +12,10 @@ interface Props {
 const { title, description, image, href, author } = Astro.props;
 const capitalizedAuthor = author ? author.charAt(0).toUpperCase() + author.slice(1) : 'Julien';
 
-// Générer les chemins pour les différentes tailles d'images
-const imagePath = image.replace('.webp', '');
-const imageSm = `${imagePath}-sm.webp`;
-const imageMd = `${imagePath}-md.webp`;
-const imageLg = `${imagePath}-lg.webp`;
+// Les chemins d'images sont déjà gérés par le script d'optimisation
+const imageSm = image.replace('.webp', '-sm.webp');
+const imageMd = image.replace('.webp', '-md.webp');
+const imageLg = image.replace('.webp', '-lg.webp');
 ---
 
 <a href={href} class="block group h-full">

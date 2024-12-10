@@ -1,7 +1,7 @@
 ---
 title: "Techniques avancées pour la pêche des carnassiers : astuces de pros pour maximiser vos prises"
 description: "Découvrez mes meilleures astuces et techniques avancées pour la pêche des carnassiers, fruit de 38 ans d'expérience sur le terrain."
-pubDate: 2024-12-09
+pubDate: 2024-12-10
 author: "julien"
 image: "/images/blog/astuces-pro-peche-carnassiers.webp"
 category: "techniques"

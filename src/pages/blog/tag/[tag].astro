@@ -1,0 +1,54 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../../layouts/Layout.astro';
+import Card from '../../../components/Card.astro';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  
+  // Récupérer tous les tags uniques
+  const tags = [...new Set(posts.flatMap(post => post.data.tags || []))];
+  
+  return tags.map(tag => ({
+    params: { tag },
+    props: { 
+      posts: posts.filter(post => post.data.tags?.includes(tag)),
+      tag 
+    },
+  }));
+}
+
+const { tag } = Astro.params;
+const { posts } = Astro.props;
+---
+
+<Layout title={`Articles tagués #${tag} - PêcheBlog`}>
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <header class="text-center mb-12">
+      <h1 class="text-4xl font-bold text-gray-900 mb-4">
+        Articles tagués #{tag}
+      </h1>
+      <p class="text-lg text-gray-600">
+        Découvrez tous nos articles sur le thème #{tag}
+      </p>
+    </header>
+
+    {posts.length === 0 ? (
+      <div class="text-center py-12">
+        <p class="text-gray-600">Aucun article trouvé avec ce tag.</p>
+      </div>
+    ) : (
+      <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+        {posts.map(post => (
+          <Card
+            title={post.data.title}
+            description={post.data.description}
+            image={post.data.image}
+            href={`/blog/${post.slug}`}
+            author={post.data.author}
+          />
+        ))}
+      </div>
+    )}
+  </main>
+</Layout>

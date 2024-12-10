@@ -7,11 +7,21 @@ import sitemap from '@astrojs/sitemap';
 export default defineConfig({
   site: 'https://peche-expert.fr',
   integrations: [
-    tailwind(),
+    tailwind({
+      configFile: './tailwind.config.cjs',
+      applyBaseStyles: false
+    }),
     sitemap({
       changefreq: 'weekly',
       priority: 0.7,
       lastmod: new Date(),
     })
-  ]
+  ],
+  vite: {
+    resolve: {
+      alias: {
+        '@': '/src'
+      }
+    }
+  }
 });

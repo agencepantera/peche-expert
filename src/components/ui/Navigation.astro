@@ -1,0 +1,117 @@
+---
+interface Props {
+  currentPath: string;
+}
+
+const { currentPath } = Astro.props;
+
+const navigation = [
+  { name: 'Accueil', href: '/' },
+  { name: 'Blog', href: '/blog' },
+  { name: 'Équipement', href: '/equipement' },
+  { name: 'Contact', href: '/contact' }
+];
+---
+
+<header class="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-lg shadow-sm">
+  <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" aria-label="Navigation principale">
+    <div class="flex h-16 items-center justify-between">
+      <!-- Logo -->
+      <div class="flex-shrink-0">
+        <a href="/" class="text-xl font-bold text-gray-900">
+          PêcheBlog
+        </a>
+      </div>
+
+      <!-- Navigation desktop -->
+      <div class="hidden md:flex md:items-center md:space-x-8">
+        {navigation.map(item => (
+          <a
+            href={item.href}
+            class:list={[
+              'text-sm font-medium transition-colors duration-200 relative group',
+              currentPath === item.href
+                ? 'text-primary-to'
+                : 'text-gray-700 hover:text-primary-to'
+            ]}
+            aria-current={currentPath === item.href ? 'page' : undefined}
+          >
+            {item.name}
+            <span class:list={[
+              'absolute -bottom-1 left-0 h-0.5 bg-primary-gradient transition-all duration-300',
+              currentPath === item.href ? 'w-full' : 'w-0 group-hover:w-full'
+            ]}></span>
+          </a>
+        ))}
+      </div>
+
+      <!-- Bouton menu mobile -->
+      <button
+        type="button"
+        class="md:hidden inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-to"
+        aria-controls="mobile-menu"
+        aria-expanded="false"
+        id="mobile-menu-button"
+      >
+        <span class="sr-only">Ouvrir le menu principal</span>
+        <svg
+          class="block h-6 w-6"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="currentColor"
+          aria-hidden="true"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+          />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Menu mobile -->
+    <div class="md:hidden hidden" id="mobile-menu">
+      <div class="space-y-1 pt-2 pb-3">
+        {navigation.map(item => (
+          <a
+            href={item.href}
+            class:list={[
+              'block px-3 py-2 text-base font-medium rounded-md transition-colors duration-200',
+              currentPath === item.href
+                ? 'bg-primary-gradient text-white'
+                : 'text-gray-700 hover:bg-gray-100'
+            ]}
+            aria-current={currentPath === item.href ? 'page' : undefined}
+          >
+            {item.name}
+          </a>
+        ))}
+      </div>
+    </div>
+  </nav>
+</header>
+
+<script>
+  const mobileMenuButton = document.getElementById('mobile-menu-button');
+  const mobileMenu = document.getElementById('mobile-menu');
+  let isMenuOpen = false;
+
+  if (mobileMenuButton && mobileMenu) {
+    mobileMenuButton.addEventListener('click', () => {
+      isMenuOpen = !isMenuOpen;
+      mobileMenu.classList.toggle('hidden', !isMenuOpen);
+      mobileMenuButton.setAttribute('aria-expanded', isMenuOpen.toString());
+    });
+  }
+
+  // Fermer le menu au redimensionnement
+  window.addEventListener('resize', () => {
+    if (window.innerWidth >= 768 && mobileMenu && !mobileMenu.classList.contains('hidden')) {
+      mobileMenu.classList.add('hidden');
+      isMenuOpen = false;
+      mobileMenuButton?.setAttribute('aria-expanded', 'false');
+    }
+  });
+</script>

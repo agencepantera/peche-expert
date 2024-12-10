@@ -1,155 +1,147 @@
 ---
+import { SITE_CONFIG } from '../config/site';
+import Navigation from '../components/ui/Navigation.astro';
+import '@/styles/global.css';
+
 interface Props {
-	title?: string;
+  title?: string;
+  description?: string;
+  image?: string;
+  article?: boolean;
+  noIndex?: boolean;
 }
 
-const { title = "Pêche Expert - Votre guide ultime de la pêche" } = Astro.props;
+const {
+  title = SITE_CONFIG.name,
+  description = SITE_CONFIG.description,
+  image = SITE_CONFIG.defaultImage,
+  article = false,
+  noIndex = false
+} = Astro.props;
 
-// Définir les catégories
-const categories = [
-	{ slug: 'techniques', name: 'Techniques', description: 'Maîtrisez les techniques de pêche' },
-	{ slug: 'spots', name: 'Spots', description: 'Découvrez les meilleurs spots' },
-	{ slug: 'equipement', name: 'Équipement', description: 'Choisissez le bon équipement' },
-	{ slug: 'conseils', name: 'Conseils', description: 'Apprenez des experts' },
-];
-
-// Import des styles de police
-import '../styles/fonts.css';
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const currentPath = Astro.url.pathname;
 ---
 
 <!doctype html>
-<html lang="fr">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="description" content="Découvrez l'art de la pêche à travers nos guides experts et notre communauté passionnée" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="google-site-verification" content="fDKFsQW8FpXnlyLQygVgrqnhFUsA2y-tIDSnwgOGpD0" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="generator" content={Astro.generator} />
-		<title>{title}</title>
-	</head>
-	<body class="font-sans">
-		<header class="fixed w-full z-50 bg-white/90 backdrop-blur-sm shadow-sm">
-			<nav class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
-				<a href="/" class="text-2xl font-bold bg-gradient-to-br from-gray-900 to-blue-900 bg-clip-text text-transparent">Pêche Expert</a>
-				
-				<div class="hidden md:flex items-center space-x-8">
-					<a href="/equipement" class="text-gray-600 hover:bg-gradient-to-br hover:from-gray-900 hover:to-blue-900 hover:bg-clip-text hover:text-transparent transition-all">Équipement</a>
-					<a href="/blog" class="text-gray-600 hover:bg-gradient-to-br hover:from-gray-900 hover:to-blue-900 hover:bg-clip-text hover:text-transparent transition-all">Blog</a>
-					<a href="/contact" class="bg-gradient-to-br from-gray-900 to-blue-900 text-white px-4 py-2 rounded-full hover:opacity-90 transition-opacity">
-						Contact
-					</a>
-				</div>
+<html lang={SITE_CONFIG.defaultLocale}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="canonical" href={canonicalURL} />
+    <meta name="generator" content={Astro.generator} />
 
-				<button 
-					class="md:hidden text-gray-600" 
-					id="mobile-menu-button"
-					aria-label="Menu principal"
-					aria-expanded="false"
-					aria-controls="mobile-menu"
-				>
-					<span class="sr-only">Ouvrir le menu</span>
-					<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-					</svg>
-				</button>
-			</nav>
+    <!-- SEO -->
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {noIndex && <meta name="robots" content="noindex" />}
+    <meta name="theme-color" content={SITE_CONFIG.themeColor} />
 
-			<!-- Mobile Menu -->
-			<div class="md:hidden hidden bg-white" id="mobile-menu" role="menu" aria-labelledby="mobile-menu-button">
-				<div class="px-4 py-4 space-y-4">
-					<a href="/equipement" class="block text-gray-600 hover:text-gray-900">Équipement</a>
-					<a href="/blog" class="block text-gray-600 hover:text-gray-900">Blog</a>
-					<a href="/contact" class="block bg-gradient-to-br from-gray-900 to-blue-900 text-white px-4 py-2 rounded-full hover:opacity-90 transition-opacity text-center">
-						Contact
-					</a>
-				</div>
-			</div>
-		</header>
+    <!-- Open Graph -->
+    <meta property="og:type" content={article ? 'article' : 'website'} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={new URL(image, Astro.site)} />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:site_name" content={SITE_CONFIG.name} />
+    <meta property="og:locale" content={SITE_CONFIG.openGraph.locale} />
 
-		<main class="pt-16">
-			<slot />
-		</main>
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={new URL(image, Astro.site)} />
 
-		<footer class="bg-gray-900 text-white py-12">
-			<div class="max-w-7xl mx-auto px-4">
-				<div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-					<div>
-						<h3 class="text-xl font-bold mb-4">Pêche Expert</h3>
-						<p class="text-gray-400">Votre guide ultime pour tout ce qui concerne la pêche.</p>
-					</div>
-					<div>
-						<h3 class="text-lg font-semibold mb-4">Navigation</h3>
-						<ul class="space-y-2">
-							<li><a href="/equipement" class="text-gray-400 hover:text-white transition-colors">Équipement</a></li>
-							<li><a href="/blog" class="text-gray-400 hover:text-white transition-colors">Blog</a></li>
-							<li><a href="/contact" class="text-gray-400 hover:text-white transition-colors">Contact</a></li>
-						</ul>
-					</div>
-					<div>
-						<h4 class="font-semibold mb-4">Légal</h4>
-						<ul class="space-y-2 text-gray-400">
-							<li><a href="/mentions-legales" class="hover:bg-gradient-to-br hover:from-gray-900 hover:to-blue-900 hover:bg-clip-text hover:text-transparent">Mentions légales</a></li>
-							<li><a href="/politique-confidentialite" class="hover:bg-gradient-to-br hover:from-gray-900 hover:to-blue-900 hover:bg-clip-text hover:text-transparent">Politique de confidentialité</a></li>
-						</ul>
-					</div>
-					<div>
-						<h4 class="font-semibold mb-4">Catégories</h4>
-						<ul class="space-y-2">
-							{categories.map(cat => (
-								<li>
-									<a 
-										href={`/blog/category/${cat.slug}`}
-										class="text-gray-400 hover:text-white transition-colors block"
-										title={cat.description}
-									>
-										{cat.name}
-									</a>
-								</li>
-							))}
-						</ul>
-					</div>
-				</div>
-				<div class="mt-8 pt-8 border-t border-gray-800 text-center text-gray-400">
-					<p>&copy; {new Date().getFullYear()} Pêche Expert. Tous droits réservés.</p>
-				</div>
-			</div>
-		</footer>
-	</body>
+    <!-- Préchargement des polices -->
+    <link
+      rel="preload"
+      href="/fonts/inter-var.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+  </head>
+  <body class="min-h-screen bg-gray-50">
+    <Navigation currentPath={currentPath} />
+    
+    <div class="pt-16"> <!-- Espace pour la navigation fixe -->
+      <slot />
+    </div>
+
+    <footer class="bg-gray-900 text-white mt-20">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <!-- À propos -->
+          <div>
+            <h3 class="text-lg font-semibold mb-4">À propos</h3>
+            <p class="text-gray-400">{SITE_CONFIG.description}</p>
+          </div>
+
+          <!-- Navigation rapide -->
+          <div>
+            <h3 class="text-lg font-semibold mb-4">Navigation</h3>
+            <ul class="space-y-2">
+              {SITE_CONFIG.nav.links.map(link => (
+                <li>
+                  <a
+                    href={link.href}
+                    class="text-gray-400 hover:text-white transition-colors duration-200"
+                  >
+                    {link.name}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <!-- Réseaux sociaux -->
+          <div>
+            <h3 class="text-lg font-semibold mb-4">Suivez-nous</h3>
+            <div class="flex space-x-4">
+              {Object.entries(SITE_CONFIG.social).map(([platform, url]) => (
+                <a
+                  href={url}
+                  class="text-gray-400 hover:text-white transition-colors duration-200"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`Suivez-nous sur ${platform}`}
+                >
+                  <span class="sr-only">Suivez-nous sur {platform}</span>
+                  <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                    {platform === 'facebook' && (
+                      <path
+                        fill-rule="evenodd"
+                        d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"
+                        clip-rule="evenodd"
+                      />
+                    )}
+                    {platform === 'instagram' && (
+                      <path
+                        fill-rule="evenodd"
+                        d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 015.45 2.525c.636-.247 1.363-.416 2.427-.465C8.901 2.013 9.256 2 11.685 2h.63zm-.081 1.802h-.468c-2.456 0-2.784.011-3.807.058-.975.045-1.504.207-1.857.344-.467.182-.8.398-1.15.748-.35.35-.566.683-.748 1.15-.137.353-.3.882-.344 1.857-.047 1.023-.058 1.351-.058 3.807v.468c0 2.456.011 2.784.058 3.807.045.975.207 1.504.344 1.857.182.466.399.8.748 1.15.35.35.683.566 1.15.748.353.137.882.3 1.857.344 1.054.048 1.37.058 4.041.058h.08c2.597 0 2.917-.01 3.96-.058.976-.045 1.505-.207 1.858-.344.466-.182.8-.398 1.15-.748.35-.35.566-.683.748-1.15.137-.353.3-.882.344-1.857.048-1.055.058-1.37.058-4.041v-.08c0-2.597-.01-2.917-.058-3.96-.045-.976-.207-1.505-.344-1.858a3.097 3.097 0 00-.748-1.15 3.098 3.098 0 00-1.15-.748c-.353-.137-.882-.3-1.857-.344-1.023-.047-1.351-.058-3.807-.058zM12 6.865a5.135 5.135 0 110 10.27 5.135 5.135 0 010-10.27zm0 1.802a3.333 3.333 0 100 6.666 3.333 3.333 0 000-6.666zm5.338-3.205a1.2 1.2 0 110 2.4 1.2 1.2 0 010-2.4z"
+                        clip-rule="evenodd"
+                      />
+                    )}
+                    {platform === 'youtube' && (
+                      <path
+                        fill-rule="evenodd"
+                        d="M19.812 5.418c.861.23 1.538.907 1.768 1.768C21.998 8.746 22 12 22 12s0 3.255-.418 4.814a2.504 2.504 0 0 1-1.768 1.768c-1.56.419-7.814.419-7.814.419s-6.255 0-7.814-.419a2.505 2.505 0 0 1-1.768-1.768C2 15.255 2 12 2 12s0-3.255.417-4.814a2.507 2.507 0 0 1 1.768-1.768C5.744 5 11.998 5 11.998 5s6.255 0 7.814.418ZM15.194 12 10 15V9l5.194 3Z"
+                        clip-rule="evenodd"
+                      />
+                    )}
+                  </svg>
+                </a>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <!-- Copyright -->
+        <div class="mt-8 pt-8 border-t border-gray-800 text-center text-gray-400">
+          <p>&copy; {new Date().getFullYear()} {SITE_CONFIG.name}. Tous droits réservés.</p>
+        </div>
+      </div>
+    </footer>
+  </body>
 </html>
-
-<script>
-	const mobileMenuButton = document.getElementById('mobile-menu-button');
-	const mobileMenu = document.getElementById('mobile-menu');
-
-	if (mobileMenuButton && mobileMenu) {
-		mobileMenuButton.addEventListener('click', () => {
-			const isExpanded = mobileMenuButton.getAttribute('aria-expanded') === 'true';
-			mobileMenuButton.setAttribute('aria-expanded', (!isExpanded).toString());
-			mobileMenu.classList.toggle('hidden');
-			
-			// Mettre à jour le texte du sr-only pour refléter l'état
-			const srOnlyText = mobileMenuButton.querySelector('.sr-only');
-			if (srOnlyText) {
-				srOnlyText.textContent = !isExpanded ? 'Fermer le menu' : 'Ouvrir le menu';
-			}
-		});
-	}
-</script>
-
-<style>
-	:root {
-		--font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-	}
-	
-	html {
-		font-family: var(--font-sans);
-		scroll-behavior: smooth;
-	}
-
-	body {
-		margin: 0;
-		width: 100%;
-		min-height: 100vh;
-	}
-</style>
